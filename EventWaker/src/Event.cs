@@ -113,6 +113,8 @@ namespace EventWaker
                 Flags[i] = reader.PeekReadInt32();
 
             PlayJingle = reader.ReadBoolean();
+
+            reader.Skip(27);
         }
 
         public void GetActors(List<Actor> actorList)
