@@ -62,10 +62,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="src\Action.cs" />
-    <Compile Include="src\Actor.cs" />
-    <Compile Include="src\Event.cs" />
-    <Compile Include="src\Property.cs" />
+    <Compile Include="src\EventList\Action.cs" />
+    <Compile Include="src\EventList\Actor.cs" />
+    <Compile Include="src\EventList\Event.cs" />
+    <Compile Include="src\EventList\MapEventList.cs" />
+    <Compile Include="src\EventList\Property.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace EventWaker
+namespace EventWaker.EventList
 {
-    class Action : INotifyPropertyChanged
+    public class Action : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

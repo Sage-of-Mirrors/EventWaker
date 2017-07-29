@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace EventWaker
+namespace EventWaker.EventList
 {
-    class Property : INotifyPropertyChanged
+    public class Property : INotifyPropertyChanged
     {
         public enum PropertyType : int
         {

@@ -2,9 +2,9 @@ using GameFormatReader.Common;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace EventWaker
+namespace EventWaker.EventList
 {
-    class Event : INotifyPropertyChanged
+    public class Event : INotifyPropertyChanged
     {
         public enum EventFlags : int
         {
