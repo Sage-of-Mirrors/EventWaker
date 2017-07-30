@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26430.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventWaker", "EventWaker\EventWaker.csproj", "{CA22712D-9EB5-4484-A408-93E5BA8563D1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graph", "Graph\Graph\Graph.csproj", "{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{CA22712D-9EB5-4484-A408-93E5BA8563D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA22712D-9EB5-4484-A408-93E5BA8563D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA22712D-9EB5-4484-A408-93E5BA8563D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4CC63D8-127D-4BC9-80E0-CCB3E9DA06DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

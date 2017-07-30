@@ -126,5 +126,11 @@
     <Content Include="lib\GameFormatReader.dll" />
     <Content Include="lib\OpenTK.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Graph\Graph\Graph.csproj">
+      <Project>{e4cc63d8-127d-4bc9-80e0-ccb3e9da06dc}</Project>
+      <Name>Graph</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
