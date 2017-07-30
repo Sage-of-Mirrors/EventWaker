@@ -23,7 +23,7 @@ namespace EventWaker
     {
         public MainWindow()
         {
-            MapEventList list = new MapEventList(@"D:\Dropbox\TWW Docs\Rooms\SirenB.wrkDir\Stage\dat\event_list.dat");
+            MapEventList list = new MapEventList(@"D:\SZS Tools\EventList Test\test.dat");
             list.Write(@"D:\SZS Tools\EventList Test\test.dat");
             InitializeComponent();
         }

@@ -114,7 +114,10 @@ namespace EventWaker.EventList
             }
 
             foreach (Event ev in Events)
+            {
                 ev.ReadActors(actorList);
+                ev.ReadLastCondition(conditionalList);
+            }
             foreach (Actor act in actorList)
                 act.ReadActions(actionList);
             foreach (Action action in actionList)
@@ -123,7 +126,7 @@ namespace EventWaker.EventList
                 action.ReadConditionalFlags(conditionalList);
             }
 
-            DumpEventsToFile(@"D:\SZS Tools\EventList Test\dump.txt");
+            DumpEventsToFile(@"D:\SZS Tools\EventList Test\dump_test.txt");
         }
 
         private void DumpEventsToFile(string fileName)
@@ -132,17 +135,17 @@ namespace EventWaker.EventList
 
             foreach (Event ev in Events)
             {
-                writer.Write($"Event: { ev.Name }\n");
+                writer.Write($"Event: { ev.Name } (Flags: { ev.Flags[0] }, { ev.Flags[1] })\n");
 
                 foreach (Actor act in ev.Actors)
                 {
                     writer.Write("\t");
-                    writer.Write($"Actor: { act.Name }\n");
+                    writer.Write($"Actor: { act.Name } (Flag: { act.Flag })\n");
                     
                     foreach (Action action in act.Actions)
                     {
                         writer.Write("\t\t");
-                        writer.Write($"Action: { action.Name }");
+                        writer.Write($"Action: { action.Name } (Flag: { action.Flag })");
 
                         if (action.Conditions[0] != null)
                         {
@@ -223,16 +226,33 @@ namespace EventWaker.EventList
             List<Action> actionList = new List<Action>();
             List<DataProperty> propList = new List<DataProperty>();
 
+            List<float> floatBank = new List<float>();
+            List<int> integerBank = new List<int>();
+            EndianBinaryWriter stringBank;
+
+            int initFlag = 0;
+
             foreach (Event ev in Events)
             {
+                ev.SetFlags(ref initFlag);
+
                 foreach (Actor act in ev.Actors)
-                    actorList.Add(act);
+                {
+                    if (!actorList.Contains(act))
+                        actorList.Add(act);
+                }
             }
 
             foreach (Actor act in actorList)
             {
                 foreach (Action action in act.Actions)
                     actionList.Add(action);
+            }
+
+            foreach (Action act in actionList)
+            {
+                foreach (DataProperty prop in act.Properties)
+                    propList.Add(prop);
             }
 
             int runningOffset = 64;
@@ -242,10 +262,67 @@ namespace EventWaker.EventList
             runningOffset += (80 * actorList.Count);
             writer.Write(runningOffset); writer.Write(actionList.Count);
             runningOffset += (80 * actionList.Count);
-            writer.Write(new byte[0x28]);
+            writer.Write(runningOffset); writer.Write(propList.Count);
+            writer.Write(new byte[0x20]);
 
             for (int i = 0; i < Events.Count; i++)
                 Events[i].Write(writer, actorList, i);
+
+            for (int i = 0; i < actorList.Count; i++)
+            {
+                actorList[i].SetActionLinks(actionList);
+                actorList[i].Write(writer, actionList, i);
+            }
+
+            for (int i = 0; i < actionList.Count; i++)
+            {
+                actionList[i].SetPropertyLinks(propList);
+                actionList[i].Write(writer, propList, i);
+            }
+
+            using (MemoryStream stringStrm = new MemoryStream())
+            {
+                stringBank = new EndianBinaryWriter(stringStrm, Endian.Big);
+
+                for (int i = 0; i < propList.Count; i++)
+                {
+                    switch (propList[i])
+                    {
+                        case FloatProperty floatProp:
+                            floatProp.Write(writer, floatBank, i);
+                            break;
+                        case Vec3Property vec3Prop:
+                            vec3Prop.Write(writer, floatBank, i);
+                            break;
+                        case IntProperty intProp:
+                            intProp.Write(writer, integerBank, i);
+                            break;
+                        case StringProperty stringProp:
+                            stringProp.Write(writer, stringBank, i);
+                            break;
+                    }
+                }
+
+                writer.Seek(32, SeekOrigin.Begin);
+                writer.Write((int)writer.BaseStream.Length); writer.Write(floatBank.Count);
+                writer.Seek(0, SeekOrigin.End);
+
+                foreach (float fl in floatBank)
+                    writer.Write(fl);
+
+                writer.Seek(40, SeekOrigin.Begin);
+                writer.Write((int)writer.BaseStream.Length); writer.Write(integerBank.Count);
+                writer.Seek(0, SeekOrigin.End);
+
+                foreach (int inte in integerBank)
+                    writer.Write(inte);
+
+                writer.Seek(48, SeekOrigin.Begin);
+                writer.Write((int)writer.BaseStream.Length); writer.Write((int)stringBank.BaseStream.Length);
+                writer.Seek(0, SeekOrigin.End);
+
+                writer.Write(stringStrm.ToArray());
+            }
         }
 
         protected void OnPropertyChanged(string propertyName)

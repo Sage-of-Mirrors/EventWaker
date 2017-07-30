@@ -29,7 +29,7 @@ namespace EventWaker.EventList
             }
         }
 
-        public int NextPropertyIndex { get { return mNextPropertyIndex; } }
+        public int NextPropertyIndex { get { return mNextPropertyIndex; } set { mNextPropertyIndex = value; } }
         public PropertyType Type { get { return mType; } }
 
         protected string mName;

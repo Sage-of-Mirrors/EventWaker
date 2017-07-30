@@ -92,6 +92,8 @@ namespace EventWaker.EventList
         private int[] mFlags;
         private bool mPlayJingle;
 
+        private IConditional mLastCondition;
+
         public Event(EndianBinaryReader reader)
         {
             mActors = new BindingList<Actor>();
@@ -129,17 +131,24 @@ namespace EventWaker.EventList
             }
         }
 
+        public void ReadLastCondition(List<IConditional> conditionalList)
+        {
+            mLastCondition = conditionalList.Find(x => x.Flag == Flags[2]);
+        }
+
         public void Write(EndianBinaryWriter writer, List<Actor> actorList, int index)
         {
             writer.WriteFixedString(Name, 32);
+            for (int i = 0; i < 32 - Name.Length; i++)
+                writer.Write((byte)0);
+
             writer.Write(index);
             writer.Write(Unknown1);
             writer.Write(Priority);
 
             foreach (Actor act in Actors)
             {
-                writer.Write(actorList.Count);
-                actorList.Add(act);
+                writer.Write(actorList.IndexOf(act));
             }
 
             for (int i = 0; i < 20 - Actors.Count; i++)
@@ -154,6 +163,17 @@ namespace EventWaker.EventList
 
             // The last 27 bytes of each entry is zero-initialized for runtime data
             writer.Write(new byte[27]);
+        }
+
+        public void SetFlags(ref int flag)
+        {
+            Flags[0] = flag++;
+            Flags[1] = flag++;
+
+            foreach (Actor act in Actors)
+                act.SetFlag(ref flag);
+
+            Flags[2] = mLastCondition.Flag;
         }
 
         public override string ToString()

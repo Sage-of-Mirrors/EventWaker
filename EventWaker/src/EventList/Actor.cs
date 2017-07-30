@@ -115,6 +115,9 @@ namespace EventWaker.EventList
         public void Write(EndianBinaryWriter writer, List<Action> actionList, int index)
         {
             writer.WriteFixedString(Name, 32);
+            for (int i = 0; i < 32 - Name.Length; i++)
+                writer.Write((byte)0);
+
             writer.Write(StaffID);
             writer.Write(index);
             writer.Write(Flag);
@@ -123,6 +126,28 @@ namespace EventWaker.EventList
 
             // The last 28 bytes of each entry is zero-initialized for runtime data
             writer.Write(new byte[28]);
+        }
+
+        public void SetFlag(ref int flag)
+        {
+            Flag = flag++;
+
+            foreach (Action action in Actions)
+                action.SetFlag(ref flag);
+        }
+
+        public void SetActionLinks(List<Action> actionList)
+        {
+            for (int i = 0; i < Actions.Count; i++)
+            {
+                if (i + 1 >= Actions.Count)
+                {
+                    Actions[i].NextActionIndex = -1;
+                    break;
+                }
+
+                Actions[i].NextActionIndex = actionList.IndexOf(Actions[i + 1]);
+            }
         }
 
         public string ToFullPathString()

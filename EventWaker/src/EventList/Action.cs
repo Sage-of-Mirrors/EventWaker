@@ -33,7 +33,7 @@ namespace EventWaker.EventList
 
         public int NextActionIndex
         {
-            get { return mNextActionIndex; }
+            get { return mNextActionIndex; } set { mNextActionIndex = value; }
         }
 
         public BindingList<DataProperty> Properties
@@ -115,9 +115,12 @@ namespace EventWaker.EventList
             }
         }
 
-        public void Write(EndianBinaryWriter writer, List<DataProperty> propList, int index, int nextAction)
+        public void Write(EndianBinaryWriter writer, List<DataProperty> propList, int index)
         {
-            writer.WriteFixedString(Name, 32);
+            writer.WriteFixedString(mName, 32);
+            for (int i = 0; i < 32 - mName.Length; i++)
+                writer.Write((byte)0);
+
             writer.Write(mDupeID);
             writer.Write(index);
 
@@ -130,10 +133,33 @@ namespace EventWaker.EventList
             }
 
             writer.Write(Flag);
-            writer.Write(nextAction);
-            writer.Write(nextAction);
+            if (Properties.Count > 0)
+                writer.Write(propList.IndexOf(Properties[0]));
+            else
+                writer.Write(-1);
+            writer.Write(NextActionIndex);
 
             writer.Write(new byte[16]);
+        }
+
+        public void SetFlag(ref int flag)
+        {
+            Flag = flag++;
+            flag += Properties.Count;
+        }
+
+        public void SetPropertyLinks(List<DataProperty> propList)
+        {
+            for (int i = 0; i < Properties.Count; i++)
+            {
+                if (i + 1 >= Properties.Count)
+                {
+                    Properties[i].NextPropertyIndex = -1;
+                    break;
+                }
+
+                Properties[i].NextPropertyIndex = propList.IndexOf(Properties[i + 1]);
+            }
         }
 
         public string ToFullPathString()
