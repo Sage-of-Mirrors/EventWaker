@@ -46,9 +46,13 @@ namespace EventWaker.EventList
 
         private void LoadEventList(EndianBinaryReader reader)
         {
+            Events = new BindingList<Event>();
+
             List<Actor> actorList = new List<Actor>();
             List<Action> actionList = new List<Action>();
-            List<Property> propList = new List<Property>();
+            List<DataProperty> propList = new List<DataProperty>();
+
+            List<IConditional> conditionalList = new List<IConditional>();
 
             List<float> floatBank = new List<float>();
             List<int> integerBank = new List<int>();
@@ -75,7 +79,10 @@ namespace EventWaker.EventList
                 actionList.Add(new Action(reader));
 
             for (int i = 0; i < propCount; i++)
-                propList.Add(new Property(reader));
+                propList.Add(DataProperty.LoadProperty(reader));
+
+            conditionalList.AddRange(actorList);
+            conditionalList.AddRange(actionList);
 
             // Data banks
             for (int i = 0; i < floatBankCount; i++)
@@ -87,6 +94,158 @@ namespace EventWaker.EventList
             // Strings are stored in a glob of bytes, so we'll encapsulate it with a stream reader
             stringBank = new EndianBinaryReader(reader.ReadBytes(stringBankLength), Endian.Big);
 
+            foreach (DataProperty prop in propList)
+            {
+                switch (prop)
+                {
+                    case FloatProperty floatProp:
+                        floatProp.ReadFloatData(floatBank);
+                        break;
+                    case Vec3Property vec3Prop:
+                        vec3Prop.ReadVec3Data(floatBank);
+                        break;
+                    case IntProperty intProp:
+                        intProp.ReadIntData(integerBank);
+                        break;
+                    case StringProperty stringProp:
+                        stringProp.ReadStringData(stringBank);
+                        break;
+                }
+            }
+
+            foreach (Event ev in Events)
+                ev.ReadActors(actorList);
+            foreach (Actor act in actorList)
+                act.ReadActions(actionList);
+            foreach (Action action in actionList)
+            {
+                action.ReadProperties(propList);
+                action.ReadConditionalFlags(conditionalList);
+            }
+
+            DumpEventsToFile(@"D:\SZS Tools\EventList Test\dump.txt");
+        }
+
+        private void DumpEventsToFile(string fileName)
+        {
+            StringWriter writer = new StringWriter();
+
+            foreach (Event ev in Events)
+            {
+                writer.Write($"Event: { ev.Name }\n");
+
+                foreach (Actor act in ev.Actors)
+                {
+                    writer.Write("\t");
+                    writer.Write($"Actor: { act.Name }\n");
+                    
+                    foreach (Action action in act.Actions)
+                    {
+                        writer.Write("\t\t");
+                        writer.Write($"Action: { action.Name }");
+
+                        if (action.Conditions[0] != null)
+                        {
+                            writer.Write(" (waits for ");
+
+                            for (int i = 0; i < 3; i++)
+                            {
+                                if (action.Conditions[i] != null)
+                                {
+                                    writer.Write($"{ action.Conditions[i].ToFullPathString() }, ");
+                                }
+                            }
+
+                            writer.Write(")\n");
+                        }
+                        else
+                            writer.Write('\n');
+
+                        foreach (DataProperty prop in action.Properties)
+                        {
+                            string propDataVal = "";
+
+                            switch (prop)
+                            {
+                                case FloatProperty floatProp:
+                                    propDataVal = floatProp.FloatData.ToString();
+                                    break;
+                                case Vec3Property vec3Prop:
+                                    propDataVal = vec3Prop.Vec3Data.ToString();
+                                    break;
+                                case IntProperty intProp:
+                                    propDataVal = intProp.IntData.ToString();
+                                    break;
+                                case StringProperty stringProp:
+                                    propDataVal = stringProp.StringData;
+                                    break;
+                            }
+
+                            writer.Write("\t\t\t");
+                            writer.Write($"{ prop.Type } Property: \t{ prop.Name }\t- Value: { propDataVal }\n");
+                        }
+                    }
+                }
+
+                writer.Write('\n');
+            }
+
+            using (FileStream strm = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            {
+                EndianBinaryWriter binWriter = new EndianBinaryWriter(strm, Endian.Big);
+                binWriter.Write(writer.ToString().ToCharArray());
+            }
+        }
+
+        public void Write(string fileName)
+        {
+            using (FileStream strm = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            {
+                EndianBinaryWriter writer = new EndianBinaryWriter(strm, Endian.Big);
+                WriteEventList(writer);
+            }
+        }
+
+        public void Write(MemoryStream strm)
+        {
+            EndianBinaryWriter writer = new EndianBinaryWriter(strm, Endian.Big);
+            WriteEventList(writer);
+        }
+
+        public void Write(EndianBinaryWriter writer)
+        {
+            WriteEventList(writer);
+        }
+
+        private void WriteEventList(EndianBinaryWriter writer)
+        {
+            List<Actor> actorList = new List<Actor>();
+            List<Action> actionList = new List<Action>();
+            List<DataProperty> propList = new List<DataProperty>();
+
+            foreach (Event ev in Events)
+            {
+                foreach (Actor act in ev.Actors)
+                    actorList.Add(act);
+            }
+
+            foreach (Actor act in actorList)
+            {
+                foreach (Action action in act.Actions)
+                    actionList.Add(action);
+            }
+
+            int runningOffset = 64;
+            writer.Write(runningOffset); writer.Write(Events.Count);
+            runningOffset += (176 * Events.Count);
+            writer.Write(runningOffset); writer.Write(actorList.Count);
+            runningOffset += (80 * actorList.Count);
+            writer.Write(runningOffset); writer.Write(actionList.Count);
+            runningOffset += (80 * actionList.Count);
+            writer.Write(new byte[0x28]);
+
+            for (int i = 0; i < Events.Count; i++)
+                Events[i].Write(writer, actorList, i);
         }
 
         protected void OnPropertyChanged(string propertyName)

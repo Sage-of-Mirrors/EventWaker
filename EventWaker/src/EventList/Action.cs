@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace EventWaker.EventList
 {
-    public class Action : INotifyPropertyChanged
+    public class Action : INotifyPropertyChanged, IConditional
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -21,14 +21,14 @@ namespace EventWaker.EventList
             }
         }
 
-        public int[] Conditions
+        public IConditional[] Conditions
         {
             get { return mConditions; }
         }
 
         public int Flag
         {
-            get { return mFlag; }
+            get { return mFlag; } set { }
         }
 
         public int NextActionIndex
@@ -36,7 +36,7 @@ namespace EventWaker.EventList
             get { return mNextActionIndex; }
         }
 
-        public BindingList<Property> Properties
+        public BindingList<DataProperty> Properties
         {
             get { return mProperties; }
             set
@@ -49,23 +49,41 @@ namespace EventWaker.EventList
             }
         }
 
+        public Actor ParentActor
+        {
+            get { return mParentActor; }
+            set
+            {
+                if (mParentActor != value)
+                {
+                    mParentActor = value;
+                    OnPropertyChanged("ParentActor");
+                }
+            }
+        }
+
         private string mName;
         private int mDupeID;
-        private int[] mConditions;
+        private int[] mConditionalFlags;
+        private IConditional[] mConditions;
         private int mFlag;
         private int mFirstPropertyIndex;
         private int mNextActionIndex;
-        private BindingList<Property> mProperties;
+        private BindingList<DataProperty> mProperties;
+        private Actor mParentActor;
 
         public Action(EndianBinaryReader reader)
         {
-            Name = new string(reader.ReadChars(32));
+            Properties = new BindingList<DataProperty>();
+
+            Name = new string(reader.ReadChars(32)).Trim('\0');
             mDupeID = reader.ReadInt32();
             reader.SkipInt32();
 
-            mConditions = new int[3];
+            mConditionalFlags = new int[3];
+            mConditions = new IConditional[3];
             for (int i = 0; i < 3; i++)
-                mConditions[i] = reader.ReadInt32();
+                mConditionalFlags[i] = reader.ReadInt32();
 
             mFlag = reader.ReadInt32();
             mFirstPropertyIndex = reader.ReadInt32();
@@ -75,25 +93,57 @@ namespace EventWaker.EventList
             reader.Skip(16);
         }
 
-        public void GetProperties(List<Property> propList)
+        public void ReadProperties(List<DataProperty> propList)
         {
+            int nextProperty = mFirstPropertyIndex;
 
+            while (nextProperty != -1)
+            {
+                Properties.Add(propList[nextProperty]);
+                nextProperty = propList[nextProperty].NextPropertyIndex;
+            }
         }
 
-        public void Write(EndianBinaryWriter writer, List<Property> propList, int index, int nextAction)
+        public void ReadConditionalFlags(List<IConditional> conditionalList)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (mConditionalFlags[i] == -1)
+                    continue;
+
+                Conditions[i] = conditionalList.Find(x => x.Flag == mConditionalFlags[i]);
+            }
+        }
+
+        public void Write(EndianBinaryWriter writer, List<DataProperty> propList, int index, int nextAction)
         {
             writer.WriteFixedString(Name, 32);
             writer.Write(mDupeID);
             writer.Write(index);
 
-            foreach (int i in mConditions)
-                writer.Write(i);
+            for (int i = 0; i < 3; i++)
+            {
+                if (Conditions[i] != null)
+                    writer.Write(Conditions[i].Flag);
+                else
+                    writer.Write(-1);
+            }
 
             writer.Write(Flag);
             writer.Write(nextAction);
             writer.Write(nextAction);
 
             writer.Write(new byte[16]);
+        }
+
+        public string ToFullPathString()
+        {
+            return $"{ ParentActor.ParentEvent.Name }.{ ParentActor.Name }.{ Name }";
+        }
+
+        public override string ToString()
+        {
+            return $"{ mName } ({ Properties.Count } property(ies))";
         }
 
         protected void OnPropertyChanged(string propertyName)

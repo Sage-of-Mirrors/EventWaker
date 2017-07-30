@@ -94,7 +94,10 @@ namespace EventWaker.EventList
 
         public Event(EndianBinaryReader reader)
         {
-            Name = new string(reader.ReadChars(32));
+            mActors = new BindingList<Actor>();
+            mFlags = new int[5];
+
+            Name = new string(reader.ReadChars(32)).Trim('\0');
             reader.SkipInt32();
             Unknown1 = reader.ReadInt32();
             Priority = reader.ReadInt32();
@@ -110,17 +113,20 @@ namespace EventWaker.EventList
             reader.BaseStream.Seek(flagOffset, System.IO.SeekOrigin.Begin);
 
             for (int i = 0; i < 5; i++)
-                Flags[i] = reader.PeekReadInt32();
+                Flags[i] = reader.ReadInt32();
 
             PlayJingle = reader.ReadBoolean();
 
             reader.Skip(27);
         }
 
-        public void GetActors(List<Actor> actorList)
+        public void ReadActors(List<Actor> actorList)
         {
             foreach (int i in mActorIndices)
+            {
+                actorList[i].ParentEvent = this;
                 Actors.Add(actorList[i]);
+            }
         }
 
         public void Write(EndianBinaryWriter writer, List<Actor> actorList, int index)
@@ -148,6 +154,11 @@ namespace EventWaker.EventList
 
             // The last 27 bytes of each entry is zero-initialized for runtime data
             writer.Write(new byte[27]);
+        }
+
+        public override string ToString()
+        {
+            return $"{ mName } ({ Actors.Count } actor(s))";
         }
 
         protected void OnPropertyChanged(string propertyName)

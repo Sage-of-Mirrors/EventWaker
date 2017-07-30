@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace EventWaker.EventList
 {
-    public class Actor : INotifyPropertyChanged
+    public class Actor : INotifyPropertyChanged, IConditional
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -36,7 +36,7 @@ namespace EventWaker.EventList
 
         public int Flag
         {
-            get { return mFlag; }
+            get { return mFlag; } set { }
         }
 
         public int StaffType
@@ -65,16 +65,32 @@ namespace EventWaker.EventList
             }
         }
 
+        public Event ParentEvent
+        {
+            get { return mParentEvent; }
+            set
+            {
+                if (mParentEvent != value)
+                {
+                    mParentEvent = value;
+                    OnPropertyChanged("ParentEvent");
+                }
+            }
+        }
+
         private string mName;
         private int mStaffID;
         private int mFlag;
         private int mStaffType;
         private int mFirstActionIndex;
         private BindingList<Action> mActions;
+        private Event mParentEvent;
 
         public Actor(EndianBinaryReader reader)
         {
-            Name = new string(reader.ReadChars(32));
+            Actions = new BindingList<Action>();
+
+            Name = new string(reader.ReadChars(32)).Trim('\0');
             StaffID = reader.ReadInt32();
             reader.SkipInt32();
             mFlag = reader.ReadInt32();
@@ -84,12 +100,13 @@ namespace EventWaker.EventList
             reader.Skip(28);
         }
 
-        public void GetActions(List<Action> actionList)
+        public void ReadActions(List<Action> actionList)
         {
             int nextAction = mFirstActionIndex;
 
             while (nextAction != -1)
             {
+                actionList[nextAction].ParentActor = this;
                 Actions.Add(actionList[nextAction]);
                 nextAction = actionList[nextAction].NextActionIndex;
             }
@@ -106,6 +123,16 @@ namespace EventWaker.EventList
 
             // The last 28 bytes of each entry is zero-initialized for runtime data
             writer.Write(new byte[28]);
+        }
+
+        public string ToFullPathString()
+        {
+            return $"{ ParentEvent.Name }.{ Name }";
+        }
+
+        public override string ToString()
+        {
+            return $"{ mName } ({ Actions.Count } action(s))";
         }
 
         protected void OnPropertyChanged(string propertyName)

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using EventWaker.EventList;
 
 namespace EventWaker
 {
@@ -22,6 +23,8 @@ namespace EventWaker
     {
         public MainWindow()
         {
+            MapEventList list = new MapEventList(@"D:\Dropbox\TWW Docs\Rooms\SirenB.wrkDir\Stage\dat\event_list.dat");
+            list.Write(@"D:\SZS Tools\EventList Test\test.dat");
             InitializeComponent();
         }
     }
