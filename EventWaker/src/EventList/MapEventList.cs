@@ -125,8 +125,6 @@ namespace EventWaker.EventList
                 action.ReadProperties(propList);
                 action.ReadConditionalFlags(conditionalList);
             }
-
-            DumpEventsToFile(@"D:\SZS Tools\EventList Test\dump_test.txt");
         }
 
         private void DumpEventsToFile(string fileName)

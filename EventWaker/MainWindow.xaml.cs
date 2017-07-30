@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using EventWaker.EventList;
+using EventWaker.ViewModel;
+using Graph;
 
 namespace EventWaker
 {
@@ -21,11 +23,23 @@ namespace EventWaker
     /// </summary>
     public partial class MainWindow : Window
     {
+        private DataViewModel mViewModel;
+
         public MainWindow()
         {
-            MapEventList list = new MapEventList(@"D:\SZS Tools\EventList Test\test.dat");
-            list.Write(@"D:\SZS Tools\EventList Test\test.dat");
+            mViewModel = new DataViewModel();
+            DataContext = mViewModel;
             InitializeComponent();
+        }
+
+        private void NodeHost_Initialized(object sender, EventArgs e)
+        {
+            //viewModel.Graph.CompatibilityStrategy = new Graph.Compatibility.TagTypeCompatibility();
+            mViewModel.Graph.AllowDrop = true;
+            mViewModel.Graph.BackColor = System.Drawing.Color.FromArgb(255, 100, 100, 100);
+
+            NodeHost.Child = mViewModel.Graph;
+            NodeHost.AllowDrop = true;
         }
     }
 }
