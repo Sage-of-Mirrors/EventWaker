@@ -29,7 +29,7 @@ namespace EventWaker.Nodes
             StaffTypeBox.ValueChanged += StaffTypeBox_ValueChanged;
             AddItem(StaffTypeBox);
 
-            ActionNodeConnector = new NodeLabelItem("Actions", false, true) { Tag = 20f };
+            ActionNodeConnector = new NodeLabelItem("Actions", false, true) { Tag = "ActorActionInput" };
             
             AddItem(ActionNodeConnector);
         }

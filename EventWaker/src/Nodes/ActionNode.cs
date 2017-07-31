@@ -23,7 +23,7 @@ namespace EventWaker.Nodes
         {
             mAction = action;
 
-            LastConnector = new NodeLabelItem("", true, true) { Tag = 20f };
+            LastConnector = new NodeLabelItem("", true, true) { Tag = "ActorActionInput" };
             AddItem(LastConnector);
 
             NodeTextBoxItem nameBox = new NodeTextBoxItem(mAction.Name);
@@ -37,11 +37,8 @@ namespace EventWaker.Nodes
             Condition3Connector = new NodeLabelItem("Condition 3", true, false);
             AddItem(Condition3Connector);
 
-            PropertyConnector = new NodeLabelItem("", false, true);
+            PropertyConnector = new NodeLabelItem("", false, true) { Tag = "ActionPropertyInput" };
             AddItem(PropertyConnector);
-
-            AddItem(new NodeColorItem("test", System.Drawing.Color.AliceBlue, true, true) { Tag = 20f });
-            AddItem(new NodeCheckboxItem("test2", true, true) { Tag = 20f });
         }
 
         private void NameBox_TextChanged(object sender, AcceptNodeTextChangedEventArgs e)

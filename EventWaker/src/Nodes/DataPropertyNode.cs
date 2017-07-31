@@ -18,7 +18,7 @@ namespace EventWaker.Nodes
         {
             mProperty = property;
 
-            LastNodeConnection = new NodeLabelItem("", true, true);
+            LastNodeConnection = new NodeLabelItem("", true, true) { Tag = "ActionPropertyInput" };
             AddItem(LastNodeConnection);
 
             NodeTextBoxItem nameBox = new NodeTextBoxItem(property.Name);
