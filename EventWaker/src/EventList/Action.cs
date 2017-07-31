@@ -64,6 +64,8 @@ namespace EventWaker.EventList
             }
         }
 
+        public Node NodeData { get; set; }
+
         private string mName;
         private int mDupeID;
         private int[] mConditionalFlags;

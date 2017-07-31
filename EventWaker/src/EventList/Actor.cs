@@ -80,6 +80,8 @@ namespace EventWaker.EventList
             }
         }
 
+        public Node NodeData { get; set; }
+
         private string mName;
         private int mStaffID;
         private int mFlag;

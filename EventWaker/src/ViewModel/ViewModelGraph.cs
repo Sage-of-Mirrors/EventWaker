@@ -37,7 +37,8 @@ namespace EventWaker.ViewModel
             foreach (Actor act in SelectedEvent.Actors)
             {
                 ActorNode actorNode = new ActorNode(act);
-
+                act.NodeData = actorNode;
+                mNodes.Add(actorNode);
                 actorNode.Location = nodeLocation;
                 nodeLocation.X = 250 + actorNode.Bounds.Width;
 
@@ -46,6 +47,8 @@ namespace EventWaker.ViewModel
                 for (int i = 0; i < act.Actions.Count; i++)
                 {
                     ActionNode actionNode = new ActionNode(act.Actions[i]);
+                    act.Actions[i].NodeData = actionNode;
+                    mNodes.Add(actionNode);
                     currentActionNodes.Add(actionNode);
                     actionNode.Location = nodeLocation;
                     nodeLocation.X += 150 + actionNode.Bounds.Width;
@@ -81,10 +84,7 @@ namespace EventWaker.ViewModel
                     }
 
                     nodeLocation.Y = curY;
-                    mNodes.Add(actionNode);
                 }
-
-                mNodes.Add(actorNode);
 
                 nodeLocation.X = 0;
                 nodeLocation.Y += 280 + actorNode.Bounds.Height;
