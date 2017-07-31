@@ -79,6 +79,7 @@
     <Compile Include="src\EventList\DataProperties\DataProperty.cs" />
     <Compile Include="src\Nodes\ActionNode.cs" />
     <Compile Include="src\Nodes\ActorNode.cs" />
+    <Compile Include="src\Nodes\ConditionalNode.cs" />
     <Compile Include="src\Nodes\DataPropertyNode.cs" />
     <Compile Include="src\Nodes\EventNode.cs" />
     <Compile Include="src\Nodes\FloatPropertyNode.cs" />

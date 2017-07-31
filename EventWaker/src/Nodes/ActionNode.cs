@@ -32,13 +32,6 @@ namespace EventWaker.Nodes
             nameBox.TextChanged += NameBox_TextChanged;
             AddItem(nameBox);
 
-            Condition1Connector = new NodeLabelItem("Condition 1", true, false);
-            AddItem(Condition1Connector);
-            Condition2Connector = new NodeLabelItem("Condition 2", true, false);
-            AddItem(Condition2Connector);
-            Condition3Connector = new NodeLabelItem("Condition 3", true, false);
-            AddItem(Condition3Connector);
-
             PropertyConnector = new NodeLabelItem("", false, true) { Tag = 'p' };
             AddItem(PropertyConnector);
         }
