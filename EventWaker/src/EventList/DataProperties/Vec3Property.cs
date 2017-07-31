@@ -23,6 +23,11 @@ namespace EventWaker.EventList
         private int mVec3Index;
         private Vector3 mVec3Data;
 
+        public Vec3Property() : base()
+        {
+            mType = PropertyType.Vector3;
+        }
+
         public Vec3Property(EndianBinaryReader reader) : base(reader)
         {
             mVec3Index = reader.ReadInt32();

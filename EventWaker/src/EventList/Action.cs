@@ -1,6 +1,8 @@
 ﻿using GameFormatReader.Common;
 using System.Collections.Generic;
 using System.ComponentModel;
+using EventWaker.Nodes;
+using Graph;
 
 namespace EventWaker.EventList
 {
@@ -76,6 +78,7 @@ namespace EventWaker.EventList
         {
             Name = "Action";
             mProperties = new BindingList<DataProperty>();
+            mConditions = new IConditional[3];
         }
 
         public Action(EndianBinaryReader reader)
@@ -105,6 +108,7 @@ namespace EventWaker.EventList
 
             while (nextProperty != -1)
             {
+                propList[nextProperty].ParentAction = this;
                 Properties.Add(propList[nextProperty]);
                 nextProperty = propList[nextProperty].NextPropertyIndex;
             }
@@ -182,6 +186,58 @@ namespace EventWaker.EventList
         {
             if (PropertyChanged != null)
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void AddDataPropertyFromNodeRecursive(DataPropertyNode node)
+        {
+            Properties.Add(node.AttatchedDataProperty);
+            node.AttatchedDataProperty.ParentAction = this;
+
+            // This isn't the last node in the chain, so we need to move on
+            if (node.LastNodeConnection.Output.HasConnection == true)
+            {
+                NodeConnection releventConnection = null;
+
+                // We'll get the connection between this DataPropertyNode and the next DataPropertyNode
+                foreach (NodeConnection connect in node.Connections)
+                {
+                    // This ignores a connection between the last DataPropertyNode and this one
+                    if (connect.To.Node != node)
+                        releventConnection = connect;
+                }
+
+                if (releventConnection == null)
+                    return;
+
+                // RECURSE!
+                AddDataPropertyFromNodeRecursive(releventConnection.To.Node as DataPropertyNode);
+            }
+        }
+
+        public void RemoveDataPropertyFromNodeRecursive(DataPropertyNode node)
+        {
+            Properties.Remove(node.AttatchedDataProperty);
+            node.AttatchedDataProperty.ParentAction = null;
+
+            // This isn't the last node in the chain, so we need to move on
+            if (node.LastNodeConnection.Output.HasConnection == true)
+            {
+                NodeConnection releventConnection = null;
+
+                // We'll get the connection between this DataPropertyNode and the next DataPropertyNode
+                foreach (NodeConnection connect in node.Connections)
+                {
+                    // This ignores a connection between the last DataPropertyNode and this one
+                    if (connect.To.Node != node)
+                        releventConnection = connect;
+                }
+
+                if (releventConnection == null)
+                    return;
+
+                // RECURSE!
+                RemoveDataPropertyFromNodeRecursive(releventConnection.To.Node as DataPropertyNode);
+            }
         }
     }
 }

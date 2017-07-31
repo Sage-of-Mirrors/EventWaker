@@ -4,9 +4,10 @@ using EventWaker.EventList;
 
 namespace EventWaker.Nodes
 {
-    class DataPropertyNode : Node
+    public class DataPropertyNode : Node
     {
         public NodeLabelItem LastNodeConnection;
+        public DataProperty AttatchedDataProperty { get { return mProperty; } }
 
         protected DataProperty mProperty;
 
@@ -18,12 +19,29 @@ namespace EventWaker.Nodes
         {
             mProperty = property;
 
-            LastNodeConnection = new NodeLabelItem("", true, true) { Tag = "ActionPropertyInput" };
+            LastNodeConnection = new NodeLabelItem("", true, true) { Tag = 'i' };
             AddItem(LastNodeConnection);
 
             NodeTextBoxItem nameBox = new NodeTextBoxItem(property.Name);
             nameBox.TextChanged += NameBox_TextChanged;
             AddItem(nameBox);
+        }
+
+        public void ProcessPropertyNodeConnect(DataPropertyNode node)
+        {
+            if (mProperty.ParentAction == null)
+                return;
+
+            mProperty.ParentAction.AddDataPropertyFromNodeRecursive(node);
+        }
+
+        public void ProcessPropertyNodeDisconnect(DataPropertyNode node)
+        {
+            // There's no parent action, so we do nothing
+            if (node.AttatchedDataProperty.ParentAction == null)
+                return;
+
+            node.AttatchedDataProperty.ParentAction.RemoveDataPropertyFromNodeRecursive(node);
         }
 
         private void NameBox_TextChanged(object sender, AcceptNodeTextChangedEventArgs e)

@@ -76,22 +76,34 @@ namespace EventWaker.ViewModel
 
         private void AddFloatPropertyItem_Click(object sender, System.EventArgs e)
         {
-            throw new System.NotImplementedException();
+            FloatProperty floatProp = new FloatProperty();
+            FloatPropertyNode floatPropNode = new FloatPropertyNode(floatProp);
+            floatPropNode.Location = lastMouseLocation;
+            AddNodeToGraph(floatPropNode);
         }
 
         private void AddVec3PropertyItem_Click(object sender, System.EventArgs e)
         {
-            throw new System.NotImplementedException();
+            Vec3Property vec3Prop = new Vec3Property();
+            Vec3PropertyNode vec3PropNode = new Vec3PropertyNode(vec3Prop);
+            vec3PropNode.Location = lastMouseLocation;
+            AddNodeToGraph(vec3PropNode);
         }
 
         private void AddIntPropertyItem_Click(object sender, System.EventArgs e)
         {
-            throw new System.NotImplementedException();
+            IntProperty intProp = new IntProperty();
+            IntPropertyNode intPropNode = new IntPropertyNode(intProp);
+            intPropNode.Location = lastMouseLocation;
+            AddNodeToGraph(intPropNode);
         }
 
         private void AddStringPropertyItem_Click(object sender, System.EventArgs e)
         {
-            throw new System.NotImplementedException();
+            StringProperty stringProp = new StringProperty();
+            StringPropertyNode stringPropNode = new StringPropertyNode(stringProp);
+            stringPropNode.Location = lastMouseLocation;
+            AddNodeToGraph(stringPropNode);
         }
     }
 }

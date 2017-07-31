@@ -22,6 +22,11 @@ namespace EventWaker.EventList
         private int mFloatIndex;
         private float mFloatData;
 
+        public FloatProperty() : base()
+        {
+            mType = PropertyType.Single;
+        }
+
         public FloatProperty(EndianBinaryReader reader) : base(reader)
         {
             mFloatIndex = reader.ReadInt32();

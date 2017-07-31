@@ -22,6 +22,11 @@ namespace EventWaker.EventList
         private int mIntIndex;
         private int mIntData;
 
+        public IntProperty() : base()
+        {
+            mType = PropertyType.Integer;
+        }
+
         public IntProperty(EndianBinaryReader reader) : base(reader)
         {
             mIntIndex = reader.ReadInt32();

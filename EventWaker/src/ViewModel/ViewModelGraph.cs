@@ -104,7 +104,18 @@ namespace EventWaker.ViewModel
             if (mDisableConnectionUpdates)
                 return;
 
-            throw new System.NotImplementedException();
+            switch (e.Connection.From.Node)
+            {
+                case ActorNode actNode:
+                    actNode.ProcessActionNodeConnect(e.Connection.To.Node as ActionNode);
+                    break;
+                case ActionNode actionNode:
+                    actionNode.ProcessNodeConnect(e.Connection.To.Node);
+                    break;
+                case DataPropertyNode dataPropNode:
+                    dataPropNode.ProcessPropertyNodeConnect(e.Connection.To.Node as DataPropertyNode);
+                    break;
+            }
         }
 
         private void Graph_ConnectionRemoved(object sender, NodeConnectionEventArgs e)
@@ -112,7 +123,18 @@ namespace EventWaker.ViewModel
             if (mDisableConnectionUpdates)
                 return;
 
-            //throw new System.NotImplementedException();
+            switch (e.From.Node)
+            {
+                case ActorNode actNode:
+                    actNode.ProcessActionNodeDisconnect(e.To.Node as ActionNode);
+                    break;
+                case ActionNode actionNode:
+                    actionNode.ProcessNodeDisconnect(e.To.Node);
+                    break;
+                case DataPropertyNode dataPropNode:
+                    dataPropNode.ProcessPropertyNodeDisconnect(e.To.Node as DataPropertyNode);
+                    break;
+            }
         }
     }
 }

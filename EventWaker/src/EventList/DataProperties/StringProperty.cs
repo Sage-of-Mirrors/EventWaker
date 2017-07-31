@@ -23,6 +23,11 @@ namespace EventWaker.EventList
         private int mStringLength;
         private string mStringData;
 
+        public StringProperty() : base()
+        {
+            mType = PropertyType.String;
+        }
+
         public StringProperty(EndianBinaryReader reader) : base(reader)
         {
             mStringStartingIndex = reader.ReadInt32();

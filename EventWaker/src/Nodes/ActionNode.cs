@@ -4,7 +4,7 @@ using EventWaker.EventList;
 
 namespace EventWaker.Nodes
 {
-    class ActionNode : Node
+    public class ActionNode : Node
     {
         public NodeLabelItem LastConnector { get; set; }
         public NodeLabelItem PropertyConnector { get; set; }
@@ -12,6 +12,8 @@ namespace EventWaker.Nodes
         public NodeLabelItem Condition1Connector { get; set; }
         public NodeLabelItem Condition2Connector { get; set; }
         public NodeLabelItem Condition3Connector { get; set; }
+
+        public Action AttachedAction { get { return mAction; } }
 
         private Action mAction;
 
@@ -23,7 +25,7 @@ namespace EventWaker.Nodes
         {
             mAction = action;
 
-            LastConnector = new NodeLabelItem("", true, true) { Tag = "ActorActionInput" };
+            LastConnector = new NodeLabelItem("", true, true) { Tag = "ActionInOut" };
             AddItem(LastConnector);
 
             NodeTextBoxItem nameBox = new NodeTextBoxItem(mAction.Name);
@@ -37,8 +39,61 @@ namespace EventWaker.Nodes
             Condition3Connector = new NodeLabelItem("Condition 3", true, false);
             AddItem(Condition3Connector);
 
-            PropertyConnector = new NodeLabelItem("", false, true) { Tag = "ActionPropertyInput" };
+            PropertyConnector = new NodeLabelItem("", false, true) { Tag = 'p' };
             AddItem(PropertyConnector);
+        }
+
+        public void ProcessNodeConnect(Node node)
+        {
+            switch (node)
+            {
+                case ActionNode actionNode:
+                    ProcessActionNodeConnect(actionNode);
+                    break;
+                case DataPropertyNode dataPropNode:
+                    ProcessDataPropertyNodeConnect(dataPropNode);
+                    break;
+            }
+        }
+
+        private void ProcessActionNodeConnect(ActionNode actionNode)
+        {
+            if (mAction.ParentActor == null)
+                return;
+
+            mAction.ParentActor.AddActionFromNodeRecursive(actionNode);
+        }
+
+        private void ProcessDataPropertyNodeConnect(DataPropertyNode dataPropNode)
+        {
+            AttachedAction.AddDataPropertyFromNodeRecursive(dataPropNode);
+        }
+
+        public void ProcessNodeDisconnect(Node node)
+        {
+            switch (node)
+            {
+                case ActionNode actionNode:
+                    ProcessActionNodeDisconnect(actionNode);
+                    break;
+                case DataPropertyNode dataPropNode:
+                    ProcessDataPropertyNodeDisconnect(dataPropNode);
+                    break;
+            }
+        }
+
+        private void ProcessActionNodeDisconnect(ActionNode actionNode)
+        {
+            // No special processing needed, since we don't have a parent Actor
+            if (AttachedAction.ParentActor == null)
+                return;
+
+            AttachedAction.ParentActor.RemoveActionFromNodeRecursive(actionNode);
+        }
+
+        private void ProcessDataPropertyNodeDisconnect(DataPropertyNode dataPropNode)
+        {
+            AttachedAction.RemoveDataPropertyFromNodeRecursive(dataPropNode);
         }
 
         private void NameBox_TextChanged(object sender, AcceptNodeTextChangedEventArgs e)

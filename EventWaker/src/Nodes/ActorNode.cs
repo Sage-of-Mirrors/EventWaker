@@ -29,9 +29,19 @@ namespace EventWaker.Nodes
             StaffTypeBox.ValueChanged += StaffTypeBox_ValueChanged;
             AddItem(StaffTypeBox);
 
-            ActionNodeConnector = new NodeLabelItem("Actions", false, true) { Tag = "ActorActionInput" };
+            ActionNodeConnector = new NodeLabelItem("Actions", false, true) { Tag = "ActorOut" };
             
             AddItem(ActionNodeConnector);
+        }
+
+        public void ProcessActionNodeConnect(ActionNode actionNode)
+        {
+            mActor.AddActionFromNodeRecursive(actionNode);
+        }
+
+        public void ProcessActionNodeDisconnect(ActionNode actionNode)
+        {
+            mActor.RemoveActionFromNodeRecursive(actionNode);
         }
 
         private void NameBox_TextChanged(object sender, AcceptNodeTextChangedEventArgs e)

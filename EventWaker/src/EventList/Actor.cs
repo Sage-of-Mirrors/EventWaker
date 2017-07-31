@@ -1,6 +1,8 @@
 ﻿using GameFormatReader.Common;
 using System.Collections.Generic;
 using System.ComponentModel;
+using EventWaker.Nodes;
+using Graph;
 
 namespace EventWaker.EventList
 {
@@ -171,6 +173,58 @@ namespace EventWaker.EventList
         {
             if (PropertyChanged != null)
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void AddActionFromNodeRecursive(ActionNode node)
+        {
+            Actions.Add(node.AttachedAction);
+            node.AttachedAction.ParentActor = this;
+
+            // This isn't the last node in the chain, so we need to move on
+            if (node.LastConnector.Output.HasConnection == true)
+            {
+                NodeConnection releventConnection = null;
+
+                // We'll get the connection between this ActionNode and the next ActionNode
+                foreach (NodeConnection connect in node.Connections)
+                {
+                    // This ignores a connection between the last ActionNode and this one
+                    if (connect.To.Node.GetType() == typeof(ActionNode) && connect.To.Node != node)
+                        releventConnection = connect;
+                }
+
+                if (releventConnection == null)
+                    return;
+
+                // RECURSE!
+                AddActionFromNodeRecursive(releventConnection.To.Node as ActionNode);
+            }
+        }
+
+        public void RemoveActionFromNodeRecursive(ActionNode node)
+        {
+            Actions.Remove(node.AttachedAction);
+            node.AttachedAction.ParentActor = null;
+
+            // This isn't the last node in the chain, so we need to move on
+            if (node.LastConnector.Output.HasConnection == true)
+            {
+                NodeConnection releventConnection = null;
+
+                // We'll get the connection between this ActionNode and the next ActionNode
+                foreach (NodeConnection connect in node.Connections)
+                {
+                    // This ignores a connection between the last ActionNode and this one
+                    if (connect.To.Node.GetType() == typeof(ActionNode) && connect.To.Node != node)
+                        releventConnection = connect;
+                }
+
+                if (releventConnection == null)
+                    return;
+
+                // RECURSE!
+                RemoveActionFromNodeRecursive(releventConnection.To.Node as ActionNode);
+            }
         }
     }
 }

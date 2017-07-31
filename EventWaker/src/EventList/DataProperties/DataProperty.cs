@@ -29,12 +29,32 @@ namespace EventWaker.EventList
             }
         }
 
+        public Action ParentAction
+        {
+            get { return mParentAction; }
+            set
+            {
+                if (mParentAction != value)
+                {
+                    mParentAction = value;
+                    OnPropertyChanged("ParentAction");
+                }
+            }
+        }
+
         public int NextPropertyIndex { get { return mNextPropertyIndex; } set { mNextPropertyIndex = value; } }
         public PropertyType Type { get { return mType; } }
 
         protected string mName;
         protected PropertyType mType;
         protected int mNextPropertyIndex;
+
+        private Action mParentAction;
+
+        public DataProperty()
+        {
+            Name = "Property";
+        }
 
         public DataProperty(EndianBinaryReader reader)
         {

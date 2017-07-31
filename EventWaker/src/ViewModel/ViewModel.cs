@@ -72,7 +72,7 @@ namespace EventWaker.ViewModel
         public DataViewModel()
         {
             Graph = new GraphControl();
-            Graph.CompatibilityStrategy = new Graph.Compatibility.TagValueCompatibility();
+            Graph.CompatibilityStrategy = new Graph.Compatibility.TagTypeCompatibility();
             Graph.HighlightCompatible = true;
             Graph.ConnectionAdded += Graph_ConnectionAdded;
             Graph.ConnectionRemoved += Graph_ConnectionRemoved;
