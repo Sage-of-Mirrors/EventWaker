@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Collections.Generic;
 using System.Windows;
 using EventWaker.EventList;
 using Microsoft.Win32;
@@ -71,8 +72,15 @@ namespace EventWaker.ViewModel
         public DataViewModel()
         {
             Graph = new GraphControl();
+            Graph.CompatibilityStrategy = new Graph.Compatibility.TagValueCompatibility();
             Graph.ConnectionAdded += Graph_ConnectionAdded;
             Graph.ConnectionRemoved += Graph_ConnectionRemoved;
+
+            Graph.MouseUp += Graph_MouseUp;
+            Graph.MouseDown += Graph_MouseDown;
+
+            mNodes = new List<Node>();
+            CreateContextMenu();
         }
 
         public void OpenList()
@@ -84,6 +92,7 @@ namespace EventWaker.ViewModel
             {
                 MainWindowTitle = openFile.FileName;
                 LoadedEventList = new MapEventList(mEventListPath);
+                SetContextMenuItemEnabled(true);
             }
         }
 

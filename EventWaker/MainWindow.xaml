@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EventWaker"
         mc:Ignorable="d"
-        Title="{Binding MainWindowTitle}" Height="350" Width="525">
+        Title="{Binding MainWindowTitle}" Height="624" Width="926.333">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="217*"/>
-            <ColumnDefinition Width="4"/>
-            <ColumnDefinition Width="534*"/>
+            <ColumnDefinition Width="191*"/>
+            <ColumnDefinition Width="6"/>
+            <ColumnDefinition Width="721*"/>
         </Grid.ColumnDefinitions>
         <GridSplitter Margin="0,10,0,-10" HorizontalAlignment="Stretch" Grid.Column="1" Grid.ColumnSpan="1"/>
         <DockPanel Height="20" LastChildFill="true" VerticalAlignment="Top" Grid.ColumnSpan="3">

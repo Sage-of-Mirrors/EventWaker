@@ -77,9 +77,17 @@
     <Compile Include="src\EventList\IConditional.cs" />
     <Compile Include="src\EventList\MapEventList.cs" />
     <Compile Include="src\EventList\DataProperties\DataProperty.cs" />
+    <Compile Include="src\Nodes\ActionNode.cs" />
+    <Compile Include="src\Nodes\ActorNode.cs" />
+    <Compile Include="src\Nodes\DataPropertyNode.cs" />
     <Compile Include="src\Nodes\EventNode.cs" />
+    <Compile Include="src\Nodes\FloatPropertyNode.cs" />
+    <Compile Include="src\Nodes\IntPropertyNode.cs" />
+    <Compile Include="src\Nodes\StringPropertyNode.cs" />
+    <Compile Include="src\Nodes\Vec3PropertyNode.cs" />
     <Compile Include="src\ViewModel\RelayCommand.cs" />
     <Compile Include="src\ViewModel\ViewModel.cs" />
+    <Compile Include="src\ViewModel\ViewModelContextMenu.cs" />
     <Compile Include="src\ViewModel\ViewModelGraph.cs" />
     <Compile Include="src\ViewModel\ViewModelNotifyPropertyChanged.cs" />
     <Compile Include="src\ViewModel\ViewModelRelayCommands.cs" />

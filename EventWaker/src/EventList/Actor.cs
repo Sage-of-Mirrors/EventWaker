@@ -86,6 +86,13 @@ namespace EventWaker.EventList
         private BindingList<Action> mActions;
         private Event mParentEvent;
 
+        public Actor(Event parent)
+        {
+            ParentEvent = parent;
+            Name = "Actor";
+            Actions = new BindingList<Action>();
+        }
+
         public Actor(EndianBinaryReader reader)
         {
             Actions = new BindingList<Action>();

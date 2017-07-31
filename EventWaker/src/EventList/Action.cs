@@ -72,6 +72,12 @@ namespace EventWaker.EventList
         private BindingList<DataProperty> mProperties;
         private Actor mParentActor;
 
+        public Action()
+        {
+            Name = "Action";
+            mProperties = new BindingList<DataProperty>();
+        }
+
         public Action(EndianBinaryReader reader)
         {
             Properties = new BindingList<DataProperty>();

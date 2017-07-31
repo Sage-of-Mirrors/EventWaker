@@ -24,9 +24,11 @@ namespace EventWaker.Nodes
             NodeTextBoxItem nameBox = new NodeTextBoxItem(mEvent.Name);
             nameBox.TextChanged += NameBox_TextChanged;
             AddItem(nameBox);
+
             NodeNumericSliderItem priorityBox = new NodeNumericSliderItem("Priority: ", 100, 0, 0, 100, mEvent.Priority, false, false);
             priorityBox.ValueChanged += PriorityBox_ValueChanged;
             AddItem(priorityBox);
+
             NodeCheckboxItem jingleBox = new NodeCheckboxItem("Play Jingle", true, false);
             AddItem(jingleBox);
         }
