@@ -120,6 +120,7 @@ namespace EventWaker.ViewModel
             }
 
             ConnectConditionalNodes();
+            RelocateConditionalNodes();
 
             Graph.AddNodes(mNodes);
         }
@@ -173,6 +174,97 @@ namespace EventWaker.ViewModel
                     }
                 }
             }
+        }
+
+        private void RelocateConditionalNodes()
+        {
+            foreach (ConditionalNode cond in mConditionalNodes)
+            {
+                if (cond.Condition1.Input.HasConnection)
+                {
+                    foreach (NodeConnection connection in cond.Connections)
+                    {
+                        if (connection.To.Item == cond.Condition1)
+                        {
+                            SetConditionalNodeLocation(connection);
+                        }
+                    }
+                }
+                if (cond.Condition2.Input.HasConnection)
+                {
+                    foreach (NodeConnection connection in cond.Connections)
+                    {
+                        if (connection.To.Item == cond.Condition2)
+                        {
+                            SetConditionalNodeLocation(connection);
+                        }
+                    }
+                }
+                if (cond.Condition3.Input.HasConnection)
+                {
+                    foreach (NodeConnection connection in cond.Connections)
+                    {
+                        if (connection.To.Item == cond.Condition3)
+                        {
+                            SetConditionalNodeLocation(connection);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void SetConditionalNodeLocation(NodeConnection connection)
+        {
+            Node condition = connection.From.Node;
+            float highestx = GetLastConditionHighestXCoord(condition, condition.Location.X);
+            ConditionalNode thisConditional = connection.To.Node as ConditionalNode;
+            float shiftAmount = 200f;
+
+            //condition.Location = new PointF(thisConditional.Location.X - 200, condition.Location.Y);
+            thisConditional.Location = new PointF(highestx + condition.Bounds.Width + shiftAmount, thisConditional.Location.Y);
+
+            foreach (NodeConnection nodeConnect in condition.Connections)
+            {
+                if (nodeConnect.From.Node == condition && nodeConnect.To.Node != thisConditional)
+                {
+                    //PropogateNodeLocationShift(nodeConnect.To.Node, condition.Location, shiftAmount);
+                }
+            }
+
+            foreach (NodeConnection nodeConnect in thisConditional.Connections)
+            {
+                if (nodeConnect.From.Node == thisConditional)
+                {
+                    PropogateNodeLocationShift(nodeConnect.To.Node, thisConditional.Location, shiftAmount);
+                }
+            }
+        }
+
+        private void PropogateNodeLocationShift(Node node, PointF location, float shiftAmount)
+        {
+            node.Location = new PointF(location.X + shiftAmount + node.Bounds.Width, node.Location.Y);
+
+            foreach (NodeConnection nodeConnect in node.Connections)
+            {
+                if (nodeConnect.From.Node == node)
+                {
+                    PropogateNodeLocationShift(nodeConnect.To.Node, node.Location, shiftAmount);
+                }
+            }
+        }
+
+        private float GetLastConditionHighestXCoord(Node node, float lastX)
+        {
+            foreach (NodeConnection connection in node.Connections)
+            {
+                if (connection.From.Node == node && connection.To.Node is DataPropertyNode)
+                {
+                    lastX = node.Location.X;
+                    return GetLastConditionHighestXCoord(connection.To.Node, lastX);
+                }
+            }
+
+            return lastX;
         }
 
         private void ConnectActionNodeToCondition(ActionNode node, ConditionalNode cond, int index)
