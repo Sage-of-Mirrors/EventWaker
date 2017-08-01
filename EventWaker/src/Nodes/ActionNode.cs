@@ -36,15 +36,18 @@ namespace EventWaker.Nodes
             AddItem(PropertyConnector);
         }
 
-        public void ProcessNodeConnect(Node node)
+        public void ProcessNodeConnect(NodeConnection connection)
         {
-            switch (node)
+            switch (connection.To.Node)
             {
                 case ActionNode actionNode:
                     ProcessActionNodeConnect(actionNode);
                     break;
                 case DataPropertyNode dataPropNode:
                     ProcessDataPropertyNodeConnect(dataPropNode);
+                    break;
+                case ConditionalNode condNode:
+                    ProcessConditionalNodeConnect(condNode, connection);
                     break;
             }
         }
@@ -62,8 +65,43 @@ namespace EventWaker.Nodes
             AttachedAction.AddDataPropertyFromNodeRecursive(dataPropNode);
         }
 
-        public void ProcessNodeDisconnect(Node node)
+        private void ProcessConditionalNodeConnect(ConditionalNode condNode, NodeConnection connection)
         {
+            if (connection.To.Item.GetType() == typeof(NodeLabelItem))
+            {
+                NodeLabelItem item = connection.To.Item as NodeLabelItem;
+
+                if (item.Text == "")
+                {
+                    AttachedAction.AddConditionalPropertyNodeFromActorRecursive(condNode);
+                }
+                else if (item.Text.Contains("Condition"))
+                {
+                    if (condNode.AttachedAction == null)
+                        return;
+
+                    IConditional newConditional = null;
+
+                    switch (connection.From.Node)
+                    {
+                        case ActorNode actorNode:
+                            newConditional = actorNode.AttatchedActor as IConditional;
+                            break;
+                        case ActionNode actionNode:
+                            newConditional = actionNode.AttachedAction as IConditional;
+                            break;
+                    }
+
+                    condNode.AttachedAction.AddConditionalPropertyNodeFromConditionals(newConditional, item);
+                    connection.RenderColor = System.Drawing.Color.Firebrick;
+                }
+            }
+        }
+
+        public void ProcessNodeDisconnect(NodeConnection disconnection)
+        {
+            Node node = disconnection.To.Node;
+
             switch (node)
             {
                 case ActionNode actionNode:
@@ -71,6 +109,9 @@ namespace EventWaker.Nodes
                     break;
                 case DataPropertyNode dataPropNode:
                     ProcessDataPropertyNodeDisconnect(dataPropNode);
+                    break;
+                case ConditionalNode condNode:
+                    ProcessConditionalNodeDisconnect(condNode, disconnection);
                     break;
             }
         }
@@ -87,6 +128,22 @@ namespace EventWaker.Nodes
         private void ProcessDataPropertyNodeDisconnect(DataPropertyNode dataPropNode)
         {
             AttachedAction.RemoveDataPropertyFromNodeRecursive(dataPropNode);
+        }
+
+        private void ProcessConditionalNodeDisconnect(ConditionalNode condNode, NodeConnection disconnection)
+        {
+            if (condNode.AttachedAction == null)
+                return;
+
+            if (disconnection.To.Item.GetType() == typeof(NodeLabelItem))
+            {
+                NodeLabelItem item = disconnection.To.Item as NodeLabelItem;
+
+                if (item.Text == "")
+                    AttachedAction.RemoveConditionalPropertyNodeFromActorRecursive(condNode);
+                else if (item.Text.Contains("Condition"))
+                    condNode.AttachedAction.RemoveConditionalPropertyNodeFromConditionals(condNode, item);
+            }
         }
 
         private void NameBox_TextChanged(object sender, AcceptNodeTextChangedEventArgs e)

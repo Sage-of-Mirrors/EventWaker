@@ -38,7 +38,7 @@ namespace EventWaker.EventList
 
         public int Flag
         {
-            get { return mFlag; } set { }
+            get { return mFlag; } set { mFlag = value; }
         }
 
         public int StaffType

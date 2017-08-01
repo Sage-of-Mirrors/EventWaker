@@ -30,7 +30,7 @@ namespace EventWaker.EventList
 
         public int Flag
         {
-            get { return mFlag; } set { }
+            get { return mFlag; } set { mFlag = value; }
         }
 
         public int NextActionIndex
@@ -239,6 +239,51 @@ namespace EventWaker.EventList
 
                 // RECURSE!
                 RemoveDataPropertyFromNodeRecursive(releventConnection.To.Node as DataPropertyNode);
+            }
+        }
+
+        public void AddConditionalPropertyNodeFromActorRecursive(ConditionalNode node)
+        {
+            if (node.AttachedAction == null)
+                return;
+
+            mParentActor.AddActionFromNodeRecursive(node.AttachedAction.NodeData as ActionNode);
+        }
+
+        public void AddConditionalPropertyNodeFromConditionals(IConditional node, Graph.Items.NodeLabelItem connector)
+        {
+            switch (connector.Text)
+            {
+                case "Condition 1":
+                    Conditions[0] = node;
+                    break;
+                case "Condition 2":
+                    Conditions[1] = node;
+                    break;
+                case "Condition 3":
+                    Conditions[2] = node;
+                    break;
+            }
+        }
+
+        public void RemoveConditionalPropertyNodeFromActorRecursive(ConditionalNode condNode)
+        {
+            mParentActor.RemoveActionFromNodeRecursive(condNode.AttachedAction.NodeData as ActionNode);
+        }
+
+        public void RemoveConditionalPropertyNodeFromConditionals(ConditionalNode condNode, Graph.Items.NodeLabelItem connector)
+        {
+            switch (connector.Text)
+            {
+                case "Condition 1":
+                    Conditions[0] = null;
+                    break;
+                case "Condition 2":
+                    Conditions[1] = null;
+                    break;
+                case "Condition 3":
+                    Conditions[2] = null;
+                    break;
             }
         }
     }

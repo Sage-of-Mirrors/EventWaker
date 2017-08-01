@@ -125,6 +125,8 @@ namespace EventWaker.EventList
                 action.ReadProperties(propList);
                 action.ReadConditionalFlags(conditionalList);
             }
+
+            DumpEventsToFile(@"D:\SZS Tools\EventList Test\dump3.txt");
         }
 
         private void DumpEventsToFile(string fileName)
@@ -232,6 +234,11 @@ namespace EventWaker.EventList
 
             foreach (Event ev in Events)
             {
+                if (ev.Name == "AJ_SPEAK")
+                {
+
+                }
+
                 ev.SetFlags(ref initFlag);
 
                 foreach (Actor act in ev.Actors)

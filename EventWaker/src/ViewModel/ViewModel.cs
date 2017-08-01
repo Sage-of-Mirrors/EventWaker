@@ -75,7 +75,8 @@ namespace EventWaker.ViewModel
             Graph.CompatibilityStrategy = new Graph.Compatibility.TagTypeCompatibility();
             Graph.HighlightCompatible = true;
             Graph.ConnectionAdded += Graph_ConnectionAdded;
-            Graph.ConnectionRemoved += Graph_ConnectionRemoved;
+            Graph.ConnectionRemoving += Graph_ConnectionRemoving;
+            //Graph.ConnectionRemoved += Graph_ConnectionRemoved;
 
             Graph.MouseUp += Graph_MouseUp;
             Graph.MouseDown += Graph_MouseDown;

@@ -6,7 +6,9 @@ namespace EventWaker.Nodes
 {
     class ActorNode : Node
     {
+        public Actor AttatchedActor {  get { return mActor; } }
         public NodeLabelItem ActionNodeConnector { get; set; }
+
         private Actor mActor;
 
         public ActorNode(string title) : base(title)

@@ -15,6 +15,7 @@ namespace EventWaker.ViewModel
             {
                 new System.Windows.Forms.MenuItem("Add Actor"),
                 new System.Windows.Forms.MenuItem("Add Action"),
+                new System.Windows.Forms.MenuItem("Add Conditional"),
                 new System.Windows.Forms.MenuItem("Add Property...", new System.Windows.Forms.MenuItem[]
                 {
                     new System.Windows.Forms.MenuItem("Float Property"),
@@ -26,10 +27,11 @@ namespace EventWaker.ViewModel
 
             mNodegraphContextMenu.MenuItems[0].Click += AddActorItem_Click;
             mNodegraphContextMenu.MenuItems[1].Click += AddActionItem_Click;
-            mNodegraphContextMenu.MenuItems[2].MenuItems[0].Click += AddFloatPropertyItem_Click;
-            mNodegraphContextMenu.MenuItems[2].MenuItems[1].Click += AddVec3PropertyItem_Click;
-            mNodegraphContextMenu.MenuItems[2].MenuItems[2].Click += AddIntPropertyItem_Click;
-            mNodegraphContextMenu.MenuItems[2].MenuItems[3].Click += AddStringPropertyItem_Click;
+            mNodegraphContextMenu.MenuItems[2].Click += AddConditional_Click;
+            mNodegraphContextMenu.MenuItems[3].MenuItems[0].Click += AddFloatPropertyItem_Click;
+            mNodegraphContextMenu.MenuItems[3].MenuItems[1].Click += AddVec3PropertyItem_Click;
+            mNodegraphContextMenu.MenuItems[3].MenuItems[2].Click += AddIntPropertyItem_Click;
+            mNodegraphContextMenu.MenuItems[3].MenuItems[3].Click += AddStringPropertyItem_Click;
 
             SetContextMenuItemEnabled(false);
         }
@@ -38,11 +40,12 @@ namespace EventWaker.ViewModel
         {
             mNodegraphContextMenu.MenuItems[0].Enabled = enabled;
             mNodegraphContextMenu.MenuItems[1].Enabled = enabled;
-            mNodegraphContextMenu.MenuItems[2].Enabled = enabled;
-            mNodegraphContextMenu.MenuItems[2].MenuItems[0].Enabled = enabled;
-            mNodegraphContextMenu.MenuItems[2].MenuItems[1].Enabled = enabled;
-            mNodegraphContextMenu.MenuItems[2].MenuItems[2].Enabled = enabled;
-            mNodegraphContextMenu.MenuItems[2].MenuItems[3].Enabled = enabled;
+            mNodegraphContextMenu.MenuItems[3].Enabled = enabled;
+            mNodegraphContextMenu.MenuItems[3].Enabled = enabled;
+            mNodegraphContextMenu.MenuItems[3].MenuItems[0].Enabled = enabled;
+            mNodegraphContextMenu.MenuItems[3].MenuItems[1].Enabled = enabled;
+            mNodegraphContextMenu.MenuItems[3].MenuItems[2].Enabled = enabled;
+            mNodegraphContextMenu.MenuItems[3].MenuItems[3].Enabled = enabled;
         }
 
         private void Graph_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -72,6 +75,12 @@ namespace EventWaker.ViewModel
             Action newAction = new Action();
             ActionNode actionNode = new ActionNode(newAction);
             AddNodeToGraph(actionNode);
+        }
+
+        private void AddConditional_Click(object sender, System.EventArgs e)
+        {
+            ConditionalNode condNode = new ConditionalNode("Conditions");
+            AddNodeToGraph(condNode);
         }
 
         private void AddFloatPropertyItem_Click(object sender, System.EventArgs e)
