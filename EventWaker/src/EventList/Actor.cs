@@ -147,6 +147,11 @@ namespace EventWaker.EventList
                 action.SetFlag(ref flag);
         }
 
+        public void SetStaffID()
+        {
+
+        }
+
         public void SetActionLinks(List<Action> actionList)
         {
             for (int i = 0; i < Actions.Count; i++)

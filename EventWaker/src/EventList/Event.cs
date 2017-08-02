@@ -145,6 +145,9 @@ namespace EventWaker.EventList
 
         public void Write(EndianBinaryWriter writer, List<Actor> actorList, int index)
         {
+            foreach (Actor act in Actors)
+                act.SetStaffID();
+
             writer.WriteFixedString(Name, 32);
             for (int i = 0; i < 32 - Name.Length; i++)
                 writer.Write((byte)0);
