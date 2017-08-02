@@ -57,7 +57,8 @@ namespace EventWaker.ViewModel
                 {
                     mSelectedEvent = value;
                     OnPropertyChanged("LoadedEventList");
-                    UpdateNodeView();
+                    if (mSelectedEvent != null)
+                        UpdateNodeView();
                 }
             }
         }
@@ -96,6 +97,7 @@ namespace EventWaker.ViewModel
                 MainWindowTitle = openFile.FileName;
                 LoadedEventList = new MapEventList(mEventListPath);
                 SetContextMenuItemEnabled(true);
+                SelectedEvent = mLoadedEventList.Events[0];
             }
         }
 
@@ -125,6 +127,27 @@ namespace EventWaker.ViewModel
             }
 
             LoadedEventList = null;
+
+            mDisableConnectionUpdates = true;
+            Graph.Clear();
+            mNodes.Clear();
+            mConditionalNodes.Clear();
+            mEventNode = null;
+            mDisableConnectionUpdates = false;
+        }
+
+        public void ResetViewport()
+        {
+            Graph.Translation = new System.Drawing.PointF();
+            Graph.Zoom = 1.0f;
+            Graph.Invalidate();
+        }
+
+        public void AddEvent()
+        {
+            Event newEv = new Event();
+            LoadedEventList.Events.Add(newEv);
+            SelectedEvent = newEv;
         }
 
         private bool CheckSaveChanges()

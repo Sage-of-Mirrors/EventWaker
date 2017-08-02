@@ -13,7 +13,7 @@ namespace EventWaker.Nodes
 
         public IntPropertyNode(IntProperty prop) : base(prop)
         {
-            NodeNumericSliderItem intDataBox = new NodeNumericSliderItem("", 100, 0, 0, 1000, prop.IntData, false, false);
+            NodeNumericSliderItem intDataBox = new NodeNumericSliderItem("", 100, 0, 0, 1000000, prop.IntData, false, false);
             intDataBox.ValueChanged += IntDataBox_ValueChanged;
             AddItem(intDataBox);
         }

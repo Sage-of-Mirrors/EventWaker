@@ -40,7 +40,7 @@ namespace EventWaker.ViewModel
         {
             mNodegraphContextMenu.MenuItems[0].Enabled = enabled;
             mNodegraphContextMenu.MenuItems[1].Enabled = enabled;
-            mNodegraphContextMenu.MenuItems[3].Enabled = enabled;
+            mNodegraphContextMenu.MenuItems[2].Enabled = enabled;
             mNodegraphContextMenu.MenuItems[3].Enabled = enabled;
             mNodegraphContextMenu.MenuItems[3].MenuItems[0].Enabled = enabled;
             mNodegraphContextMenu.MenuItems[3].MenuItems[1].Enabled = enabled;
@@ -66,20 +66,25 @@ namespace EventWaker.ViewModel
 
         private void AddActorItem_Click(object sender, System.EventArgs e)
         {
-            SelectedEvent.Actors.Add(new Actor(SelectedEvent));
-            UpdateNodeView();
+            Actor newActor = new Actor(SelectedEvent);
+            SelectedEvent.Actors.Add(newActor);
+            ActorNode actNode = new ActorNode(newActor);
+            actNode.Location = Graph.GetTransformedLocation(lastMouseLocation);
+            AddNodeToGraph(actNode);
         }
 
         private void AddActionItem_Click(object sender, System.EventArgs e)
         {
             Action newAction = new Action();
             ActionNode actionNode = new ActionNode(newAction);
+            actionNode.Location = Graph.GetTransformedLocation(lastMouseLocation);
             AddNodeToGraph(actionNode);
         }
 
         private void AddConditional_Click(object sender, System.EventArgs e)
         {
             ConditionalNode condNode = new ConditionalNode("Conditions");
+            condNode.Location = Graph.GetTransformedLocation(lastMouseLocation);
             AddNodeToGraph(condNode);
         }
 
@@ -87,7 +92,7 @@ namespace EventWaker.ViewModel
         {
             FloatProperty floatProp = new FloatProperty();
             FloatPropertyNode floatPropNode = new FloatPropertyNode(floatProp);
-            floatPropNode.Location = lastMouseLocation;
+            floatPropNode.Location = Graph.GetTransformedLocation(lastMouseLocation);
             AddNodeToGraph(floatPropNode);
         }
 
@@ -95,7 +100,7 @@ namespace EventWaker.ViewModel
         {
             Vec3Property vec3Prop = new Vec3Property();
             Vec3PropertyNode vec3PropNode = new Vec3PropertyNode(vec3Prop);
-            vec3PropNode.Location = lastMouseLocation;
+            vec3PropNode.Location = Graph.GetTransformedLocation(lastMouseLocation);
             AddNodeToGraph(vec3PropNode);
         }
 
@@ -103,7 +108,7 @@ namespace EventWaker.ViewModel
         {
             IntProperty intProp = new IntProperty();
             IntPropertyNode intPropNode = new IntPropertyNode(intProp);
-            intPropNode.Location = lastMouseLocation;
+            intPropNode.Location = Graph.GetTransformedLocation(lastMouseLocation);
             AddNodeToGraph(intPropNode);
         }
 
@@ -111,7 +116,7 @@ namespace EventWaker.ViewModel
         {
             StringProperty stringProp = new StringProperty();
             StringPropertyNode stringPropNode = new StringPropertyNode(stringProp);
-            stringPropNode.Location = lastMouseLocation;
+            stringPropNode.Location = Graph.GetTransformedLocation(lastMouseLocation);
             AddNodeToGraph(stringPropNode);
         }
     }

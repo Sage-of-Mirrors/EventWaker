@@ -216,6 +216,37 @@ namespace EventWaker.ViewModel
         private void SetConditionalNodeLocation(NodeConnection connection)
         {
             Node condition = connection.From.Node;
+            ConditionalNode thisConditional = connection.To.Node as ConditionalNode;
+            float highestx = GetLastConditionHighestXCoord(condition, condition.Location.X);
+            float minDistance = 50f;
+            float shiftAmount = 200f;
+
+            if (thisConditional.Location.X - highestx < 0f)
+            {
+                PointF thisConditionalOriginal = thisConditional.Location;
+                //condition.Location = new PointF(thisConditional.Location.X - 200, condition.Location.Y);
+                thisConditional.Location = new PointF(highestx + condition.Bounds.Width + shiftAmount, thisConditional.Location.Y);
+
+                float deltaX = System.Math.Abs(thisConditionalOriginal.X - thisConditional.Location.X);
+
+                foreach (NodeConnection nodeConnect in condition.Connections)
+                {
+                    if (nodeConnect.From.Node == condition && nodeConnect.To.Node != thisConditional)
+                    {
+                        //PropogateNodeLocationShift(nodeConnect.To.Node, condition.Location, shiftAmount);
+                    }
+                }
+
+                foreach (NodeConnection nodeConnect in thisConditional.Connections)
+                {
+                    if (nodeConnect.From.Node == thisConditional)
+                    {
+                        PropogateNodeLocationShift(nodeConnect.To.Node, thisConditional.Location, deltaX);
+                    }
+                }
+            }
+
+            /*
             float highestx = GetLastConditionHighestXCoord(condition, condition.Location.X);
             ConditionalNode thisConditional = connection.To.Node as ConditionalNode;
             float shiftAmount = 200f;
@@ -237,12 +268,13 @@ namespace EventWaker.ViewModel
                 {
                     PropogateNodeLocationShift(nodeConnect.To.Node, thisConditional.Location, shiftAmount);
                 }
-            }
+            }*/
         }
 
         private void PropogateNodeLocationShift(Node node, PointF location, float shiftAmount)
         {
-            node.Location = new PointF(location.X + shiftAmount + node.Bounds.Width, node.Location.Y);
+            //float highestX = GetLastConditionHighestXCoord(node, node.Location.X);
+            node.Location = new PointF(node.Location.X + shiftAmount, node.Location.Y);
 
             foreach (NodeConnection nodeConnect in node.Connections)
             {

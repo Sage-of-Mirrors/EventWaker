@@ -36,6 +36,18 @@ namespace EventWaker.ViewModel
             get { return new RelayCommand(x => ExitApplication()); }
         }
 
+        /// <summary> The user has pressed View->Reset Viewport. </summary>
+        public ICommand OnRequestResetViewport
+        {
+            get { return new RelayCommand(x => ResetViewport()); }
+        }
+
+        /// <summary> The user has pressed Edit->Add Event. </summary>
+        public ICommand OnRequestAddEvent
+        {
+            get { return new RelayCommand(x => AddEvent(), x=> mLoadedEventList != null); }
+        }
+
         /// <summary> The user has clicked Report a Bug... from the Help menu. </summary>
         public ICommand OnRequestReportBug
         {

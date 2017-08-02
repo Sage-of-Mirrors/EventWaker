@@ -23,6 +23,12 @@
                     <Separator/>
                     <MenuItem Header="E_xit" Command="{Binding OnRequestApplicationExit}"/>
                 </MenuItem>
+                <MenuItem Header="_Edit">
+                    <MenuItem Header="Add Event" Command="{Binding OnRequestAddEvent}"/>
+                </MenuItem>
+                <MenuItem Header="_View">
+                    <MenuItem Header="Reset View" Command="{Binding OnRequestResetViewport}"/>
+                </MenuItem>
                 <MenuItem Header="_Help">
                     <MenuItem Header="Report a Bug" Command="{Binding OnRequestReportBug}"/>
                     <MenuItem Header="Wiki" Command="{Binding OnRequestOpenWiki}"/>

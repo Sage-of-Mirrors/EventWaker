@@ -94,6 +94,13 @@ namespace EventWaker.EventList
 
         private IConditional mLastCondition;
 
+        public Event()
+        {
+            Name = "New Event";
+            mActors = new BindingList<Actor>();
+            mFlags = new int[5];
+        }
+
         public Event(EndianBinaryReader reader)
         {
             mActors = new BindingList<Actor>();
