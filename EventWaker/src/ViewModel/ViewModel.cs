@@ -82,6 +82,8 @@ namespace EventWaker.ViewModel
             Graph.MouseUp += Graph_MouseUp;
             Graph.MouseDown += Graph_MouseDown;
 
+            Graph.KeyUp += Graph_KeyUp;
+
             mNodes = new List<Node>();
             mConditionalNodes = new List<Nodes.ConditionalNode>();
             CreateContextMenu();

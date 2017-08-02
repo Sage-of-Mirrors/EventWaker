@@ -325,6 +325,43 @@ namespace EventWaker.ViewModel
             Graph.AddNode(node);
         }
 
+        private void DeleteNodes()
+        {
+            if (Graph.FocusElement is Node && !(Graph.FocusElement is EventNode))
+            {
+                Node node = Graph.FocusElement as Node;
+                RemoveNode(node);
+            }
+            else if (Graph.FocusElement is NodeSelection)
+            {
+                NodeSelection selection = Graph.FocusElement as NodeSelection;
+
+                for (int i = selection.Nodes.Length - 1; i > -1; i--)
+                {
+                    RemoveNode(selection.Nodes[i]);
+                }
+            }
+        }
+
+        private void RemoveNode(Node node)
+        {
+            Graph.RemoveNode(node);
+
+            if (mNodes.Contains(node))
+                mNodes.Remove(node);
+
+            switch (node)
+            {
+                case ActorNode actNode:
+                    SelectedEvent.Actors.Remove(actNode.AttatchedActor);
+                    break;
+                case ConditionalNode condNode:
+                    if (mConditionalNodes.Contains(condNode))
+                        mConditionalNodes.Remove(condNode);
+                    break;
+            }
+        }
+
         private void Graph_ConnectionAdded(object sender, AcceptNodeConnectionEventArgs e)
         {
             if (mDisableConnectionUpdates)
@@ -388,6 +425,14 @@ namespace EventWaker.ViewModel
                 case ConditionalNode condNode:
                     condNode.ProcessActionNodeDisconnect(e.Connection.To.Node as ActionNode);
                     break;
+            }
+        }
+
+        private void Graph_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.KeyCode == System.Windows.Forms.Keys.Delete)
+            {
+                DeleteNodes();
             }
         }
     }

@@ -62,6 +62,8 @@ namespace EventWaker.ViewModel
                     mNodegraphContextMenu.Show(Graph, e.Location);
                 }
             }
+
+            Graph.Focus();
         }
 
         private void AddActorItem_Click(object sender, System.EventArgs e)

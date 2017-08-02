@@ -106,7 +106,8 @@ namespace EventWaker.Nodes
                 mAction.Conditions[i] = null;
             }
 
-            mAction.ParentActor.RemoveActionFromNodeRecursive(actionNode);
+            if (mAction.ParentActor != null)
+                mAction.ParentActor.RemoveActionFromNodeRecursive(actionNode);
             mAction = null;
         }
     }
