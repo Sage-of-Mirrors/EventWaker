@@ -83,6 +83,7 @@ namespace EventWaker.EventList
         }
 
         public int[] Flags { get { return mFlags; } set { mFlags = value; } }
+        public IConditional[] LastConditions { get { return mLastConditions; } }
 
         private string mName;
         private int mUnknown1;
@@ -92,19 +93,21 @@ namespace EventWaker.EventList
         private int[] mFlags;
         private bool mPlayJingle;
 
-        private IConditional mLastCondition;
+        private IConditional[] mLastConditions;
 
         public Event()
         {
             Name = "New Event";
             mActors = new BindingList<Actor>();
             mFlags = new int[5];
+            mLastConditions = new IConditional[3];
         }
 
         public Event(EndianBinaryReader reader)
         {
             mActors = new BindingList<Actor>();
             mFlags = new int[5];
+            mLastConditions = new IConditional[3];
 
             Name = new string(reader.ReadChars(32)).Trim('\0');
             reader.SkipInt32();
@@ -140,13 +143,16 @@ namespace EventWaker.EventList
 
         public void ReadLastCondition(List<IConditional> conditionalList)
         {
-            mLastCondition = conditionalList.Find(x => x.Flag == Flags[2]);
+            for (int i = 0; i < 3; i++)
+            {
+                mLastConditions[i] = conditionalList.Find(x => x.Flag == Flags[i + 2]);
+            }
         }
 
         public void Write(EndianBinaryWriter writer, List<Actor> actorList, int index)
         {
             foreach (Actor act in Actors)
-                act.SetStaffID();
+                act.SetStaffType();
 
             writer.WriteFixedString(Name, 32);
             for (int i = 0; i < 32 - Name.Length; i++)
@@ -183,12 +189,28 @@ namespace EventWaker.EventList
             foreach (Actor act in Actors)
                 act.SetFlag(ref flag);
 
-            Flags[2] = mLastCondition.Flag;
+            for (int i = 0; i < 3; i++)
+            {
+                if (mLastConditions[i] != null)
+                    Flags[i + 2] = mLastConditions[i].Flag;
+                else
+                    Flags[i + 2] = -1;
+            }
         }
 
         public override string ToString()
         {
             return $"{ mName } ({ Actors.Count } actor(s))";
+        }
+
+        public void AddEndConditionFromNode(IConditional cond, int index)
+        {
+            mLastConditions[index] = cond;
+        }
+
+        public void RemoveEndConditionFromNode(int index)
+        {
+            mLastConditions[index] = null;
         }
 
         protected void OnPropertyChanged(string propertyName)

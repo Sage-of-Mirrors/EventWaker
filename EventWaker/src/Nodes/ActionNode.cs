@@ -49,6 +49,9 @@ namespace EventWaker.Nodes
                 case ConditionalNode condNode:
                     ProcessConditionalNodeConnect(condNode, connection);
                     break;
+                case EndNode endNode:
+                    endNode.ProcessNodeConnection(connection);
+                    break;
             }
         }
 
@@ -112,6 +115,9 @@ namespace EventWaker.Nodes
                     break;
                 case ConditionalNode condNode:
                     ProcessConditionalNodeDisconnect(condNode, disconnection);
+                    break;
+                case EndNode endNode:
+                    endNode.ProcessNodeDisconnection(disconnection);
                     break;
             }
         }

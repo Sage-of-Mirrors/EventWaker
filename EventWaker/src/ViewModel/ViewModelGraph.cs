@@ -12,6 +12,8 @@ namespace EventWaker.ViewModel
     public partial class DataViewModel : INotifyPropertyChanged
     {
         private EventNode mEventNode;
+        private EndNode mEndNode;
+
         private List<Node> mNodes;
         private List<ConditionalNode> mConditionalNodes;
         private bool mDisableConnectionUpdates;
@@ -21,6 +23,7 @@ namespace EventWaker.ViewModel
             mDisableConnectionUpdates = true;
 
             mEventNode = new EventNode(SelectedEvent);
+            mEndNode = new EndNode(SelectedEvent);
             BuildGraph();
 
             mDisableConnectionUpdates = false;
@@ -33,6 +36,7 @@ namespace EventWaker.ViewModel
             Graph.Clear();
 
             Graph.AddNode(mEventNode);
+            Graph.AddNode(mEndNode);
 
             PointF nodeLocation = new PointF(0, 150);
 
@@ -121,6 +125,7 @@ namespace EventWaker.ViewModel
 
             ConnectConditionalNodes();
             RelocateConditionalNodes();
+            ConnectEndNode();
 
             Graph.AddNodes(mNodes);
         }
@@ -172,6 +177,44 @@ namespace EventWaker.ViewModel
                             ConnectActionNodeToCondition(actionNode, cond, i);
                             break;
                     }
+                }
+            }
+        }
+
+        private void ConnectEndNode()
+        {
+            foreach (Node node in mNodes)
+            {
+                switch (node)
+                {
+                    case ActorNode actNode:
+                        if (SelectedEvent.LastConditions[0] == actNode.AttatchedActor)
+                        {
+                            Graph.Connect(actNode.ActionNodeConnector, mEndNode.EndCondition1);
+                        }
+                        else if (SelectedEvent.LastConditions[1] == actNode.AttatchedActor)
+                        {
+                            Graph.Connect(actNode.ActionNodeConnector, mEndNode.EndCondition2);
+                        }
+                        else if (SelectedEvent.LastConditions[2] == actNode.AttatchedActor)
+                        {
+                            Graph.Connect(actNode.ActionNodeConnector, mEndNode.EndCondition3);
+                        }
+                        break;
+                    case ActionNode actionNode:
+                        if (SelectedEvent.LastConditions[0] == actionNode.AttachedAction)
+                        {
+                            Graph.Connect(actionNode.LastConnector, mEndNode.EndCondition1);
+                        }
+                        else if (SelectedEvent.LastConditions[1] == actionNode.AttachedAction)
+                        {
+                            Graph.Connect(actionNode.LastConnector, mEndNode.EndCondition2);
+                        }
+                        else if (SelectedEvent.LastConditions[2] == actionNode.AttachedAction)
+                        {
+                            Graph.Connect(actionNode.LastConnector, mEndNode.EndCondition3);
+                        }
+                        break;
                 }
             }
         }
@@ -370,7 +413,7 @@ namespace EventWaker.ViewModel
             switch (e.Connection.From.Node)
             {
                 case ActorNode actNode:
-                    actNode.ProcessActionNodeConnect(e.Connection.To.Node as ActionNode);
+                    actNode.ProcessNodeConnection(e.Connection);
                     break;
                 case ActionNode actionNode:
                     actionNode.ProcessNodeConnect(e.Connection);
@@ -392,7 +435,7 @@ namespace EventWaker.ViewModel
             switch (e.From.Node)
             {
                 case ActorNode actNode:
-                    actNode.ProcessActionNodeDisconnect(e.To.Node as ActionNode);
+                    actNode.ProcessNodeDisconnection(e.Connection);
                     break;
                 case ActionNode actionNode:
                     actionNode.ProcessNodeDisconnect(e.Connection);
@@ -414,7 +457,7 @@ namespace EventWaker.ViewModel
             switch (e.Connection.From.Node)
             {
                 case ActorNode actNode:
-                    actNode.ProcessActionNodeDisconnect(e.Connection.To.Node as ActionNode);
+                    actNode.ProcessNodeDisconnection(e.Connection);
                     break;
                 case ActionNode actionNode:
                     actionNode.ProcessNodeDisconnect(e.Connection);

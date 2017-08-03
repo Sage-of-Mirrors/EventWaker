@@ -84,6 +84,7 @@
     <Compile Include="src\Nodes\ActorNode.cs" />
     <Compile Include="src\Nodes\ConditionalNode.cs" />
     <Compile Include="src\Nodes\DataPropertyNode.cs" />
+    <Compile Include="src\Nodes\EndNode.cs" />
     <Compile Include="src\Nodes\EventNode.cs" />
     <Compile Include="src\Nodes\FloatPropertyNode.cs" />
     <Compile Include="src\Nodes\IntPropertyNode.cs" />

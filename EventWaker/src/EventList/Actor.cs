@@ -1,7 +1,7 @@
-﻿using GameFormatReader.Common;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using EventWaker.Nodes;
+using GameFormatReader.Common;
 using Graph;
 
 namespace EventWaker.EventList
@@ -147,9 +147,55 @@ namespace EventWaker.EventList
                 action.SetFlag(ref flag);
         }
 
-        public void SetStaffID()
+        public void SetStaffType()
         {
-
+            switch (Name.ToLowerInvariant())
+            {
+                case "all":
+                case "md1":
+                case "cb1":
+                case "bomb":
+                case "auzu":
+                case "kamome":
+                case "msdansb":
+                case "msdans2":
+                    StaffType = 1;
+                    break;
+                case "camera":
+                    StaffType = 2;
+                    break;
+                case "timekeeper":
+                    StaffType = 4;
+                    break;
+                case "director":
+                    StaffType = 6;
+                    break;
+                case "message":
+                    StaffType = 7;
+                    break;
+                case "sound":
+                    StaffType = 8;
+                    break;
+                case "light":
+                    StaffType = 9;
+                    break;
+                case "windman":
+                case "talkman":
+                case "treasure":
+                case "tagisl":
+                case "tagpo":
+                case "switch":
+                case "shutter_door":
+                case "md_message_tag":
+                    StaffType = 10;
+                    break;
+                case "package":
+                    StaffType = 11;
+                    break;
+                default:
+                    StaffType = 0;
+                    break;
+            }
         }
 
         public void SetActionLinks(List<Action> actionList)

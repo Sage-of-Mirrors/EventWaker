@@ -36,14 +36,34 @@ namespace EventWaker.Nodes
             AddItem(ActionNodeConnector);
         }
 
-        public void ProcessActionNodeConnect(ActionNode actionNode)
+        public void ProcessNodeConnection(NodeConnection connection)
         {
-            mActor.AddActionFromNodeRecursive(actionNode);
+            switch (connection.To.Node)
+            {
+                case ActionNode actionNode:
+                    mActor.AddActionFromNodeRecursive(actionNode);
+                    break;
+                case ConditionalNode condNode:
+                    break;
+                case EndNode endNode:
+                    endNode.ProcessNodeConnection(connection);
+                    break;
+            }
         }
 
-        public void ProcessActionNodeDisconnect(ActionNode actionNode)
+        public void ProcessNodeDisconnection(NodeConnection connection)
         {
-            mActor.RemoveActionFromNodeRecursive(actionNode);
+            switch (connection.To.Node)
+            {
+                case ActionNode actionNode:
+                    mActor.RemoveActionFromNodeRecursive(actionNode);
+                    break;
+                case ConditionalNode condNode:
+                    break;
+                case EndNode endNode:
+                    endNode.ProcessNodeDisconnection(connection);
+                    break;
+            }
         }
 
         private void NameBox_TextChanged(object sender, AcceptNodeTextChangedEventArgs e)
